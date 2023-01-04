@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     name: Build
+    env:
+      CI: false
     runs-on: ubuntu-latest
     
     steps:
@@ -33,10 +35,30 @@ jobs:
       with:
         name: production-files
         path: ./build
+        
+  upload:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@main
   
   deploy:
     name: Deploy
-    needs: build
+    needs: upload
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     permissions:
