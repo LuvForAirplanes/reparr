@@ -228,6 +228,7 @@ function App() {
             Add
           </Button>
           <Button onClick={() => setRenaming(profile!.name)}>Rename</Button>
+          <Button color='error' onClick={() => setData(data.filter((d) => d.name !== profile!.name))}>Delete</Button>
           </Box>
           <Box>
             {profile &&
